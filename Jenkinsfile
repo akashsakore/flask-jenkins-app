@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        IMAGE_NAME = "flask-ci-cd:10"
+        IMAGE_NAME = "flask-jenkins:8"
     }
 
     stages {
@@ -15,7 +15,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    sh 'docker build -t flask-jenkins .'
+                    sh 'docker build -t flask-app .'
                 }
             }
         }
@@ -24,10 +24,11 @@ pipeline {
             steps {
                 script {
                     sh 'docker stop flask-app || true && docker rm flask-app || true'
-                    sh 'docker run -d --name flask-app -p 8001:8001 flask-jenkins'
+                    sh 'docker run -d --name flask-app -p 8001:8001 flask-app'
                 }
             }
         }
     }
 }
+
 

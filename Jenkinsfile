@@ -1,8 +1,8 @@
 pipeline {
     agent any
 
-i    environment {
-        IMAGE_NAME = "flask-ci-cd:1"
+    environment {
+        IMAGE_NAME = "flask-ci-cd:2"
     }
 
     stages {

@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        IMAGE_NAME = "flask-ci-cd:4"
+        IMAGE_NAME = "flask-ci-cd:10"
     }
 
     stages {

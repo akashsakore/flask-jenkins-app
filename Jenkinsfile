@@ -4,9 +4,10 @@ pipeline {
     }
     environment {
         IMAGE_NAME = 'akashsakore/flask_app'
+        VERSION = "${env.BUILD_NUMBER}"
     }
     stages {
-        stage('git-clone') {
+        stage('git checkout') {
             steps {
                 git branch: 'main', url: 'https://github.com/akashsakore/flask-jenkins-app.git'
             }
@@ -19,7 +20,7 @@ pipeline {
         }
         stage('Build docker image') {
             steps {
-               sh 'docker build -t ${IMAGE_NAME}:latest .'
+               sh 'docker build -t ${IMAGE_NAME}:${VERSION} .'
             }
         }
         stage('log in to dockerhub') {
@@ -33,7 +34,10 @@ pipeline {
         }
         stage('Push Image to DockerHub') {
             steps {
-                sh "docker push ${IMAGE_NAME}:latest"
+                sh """
+                docker push ${IMAGE_NAME}:latest
+                docker push ${IMAGE_NAME}:${VERSION}
+                """
             }
         }
         stage('Run Container') {
@@ -45,6 +49,30 @@ pipeline {
                 docker run -d -p 8001:8001 --name flask_app ${IMAGE_NAME}:latest
                 """
             }
+        }
+    }
+    post {
+        failure {
+            echo "Build failed! Rolling back to previous version..."
+            sh """
+            PREVIOUS_VERSION=$((${VERSION}-1))
+
+            if [ "$PREVIOUS_VERSION" -le 0 ]; then
+                echo "No previous version available — rollback skipped."
+                exit 0
+            fi
+            echo "Rolling back to version: \$PREVIOUS_VERSION"
+
+            docker pull ${IMAGE_NAME}:\$PREVIOUS_VERSION
+
+            docker stop flask_app || true
+            docker rm flask_app || true
+
+            docker run -d -p 8001:8001 --name flask_app ${IMAGE_NAME}:\$PREVIOUS_VERSION
+            """
+        }
+        success {
+            echo "Deployment successful — no rollback required."
         }
     }
 }

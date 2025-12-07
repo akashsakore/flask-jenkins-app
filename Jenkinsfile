@@ -20,7 +20,7 @@ pipeline {
         }
         stage('Build docker image') {
             steps {
-               sh 'docker build -t ${IMAGE_NAME}:${VERSION} .'
+               sh 'docker build -t ${IMAGE_NAME}:latest -t ${IMAGE_NAME}:${VERSION} .'
             }
         }
         stage('log in to dockerhub') {

@@ -55,7 +55,7 @@ pipeline {
         failure {
             echo "Build failed! Rolling back to previous version..."
             sh """
-            PREVIOUS_VERSION=$((${VERSION}-1))
+            PREVIOUS_VERSION=\$((${VERSION}-1))
 
             if [ "$PREVIOUS_VERSION" -le 0 ]; then
                 echo "No previous version available — rollback skipped."

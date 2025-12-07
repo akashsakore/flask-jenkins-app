@@ -14,7 +14,7 @@ pipeline {
         stage('delete old local image') {
             steps {
                 echo 'deleting old local images'
-                sh 'docker prune image -af || true'
+                sh 'docker image prune -af || true'
             }
         }
         stage('Build docker image') {

@@ -3,7 +3,7 @@ pipeline {
         label 'docker-node'
     }
     environment {
-        IMAge_name = 'akashsakore/flask_app'
+        IMAGE_NAME = 'akashsakore/flask_app'
     }
     stages {
         stage('git-clone') {
